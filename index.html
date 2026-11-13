@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NursePrep | NCLEX Practice</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,Arial;background:#f0f5f7;margin:0;color:#183344}
+header{background:#116c77;color:white;padding:24px;text-align:center}
+header h1{margin:0;font-size:29px}
+header p{margin:7px 0 0}
+main{max-width:650px;margin:24px auto;padding:0 15px}
+.card{background:white;border-radius:16px;padding:24px;box-shadow:0 3px 16px #18334415;margin-bottom:18px}
+h2{font-size:22px}
+.small{color:#61727e;font-size:14px}
+.option{display:block;width:100%;padding:15px;text-align:left;border:1px solid #cedadd;background:white;border-radius:10px;margin:10px 0;font-size:16px;color:#183344}
+.option.selected{border:2px solid #116c77;background:#e6f5f2}
+button.primary{background:#116c77;color:white;border:0;border-radius:10px;padding:14px 20px;font-size:16px;width:100%;margin-top:12px}
+button:disabled{opacity:.45}
+.feedback{background:#eef5f8;padding:15px;border-radius:10px;margin-top:15px;line-height:1.6}
+.correct{color:#087f55}
+.wrong{color:#b02d3a}
+.progress{height:8px;background:#dce6e9;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#16a085;transition:width .2s}
+footer{text-align:center;color:#687986;font-size:12px;padding:24px}
+</style>
+</head>
+<body>
+<header>
+<h1>🩺 NursePrep</h1>
+<p>Interactive Nursing Board Practice</p>
+</header>
+<main>
+<div class="card" id="app"></div>
+</main>
+<footer>Educational practice only. Not affiliated with NCSBN.</footer>
+<script>
+const questions=[
+{
+topic:"Patient Safety",
+q:"A client develops new-onset stridor following thyroid surgery. What is the nurse's priority?",
+a:["Document the finding","Assess airway and activate emergency assistance","Offer oral fluids","Reassess in one hour"],
+correct:1,
+why:"Stridor may indicate acute airway obstruction. Airway assessment and immediate escalation are the priority."
+},
+{
+topic:"Infection Prevention",
+q:"Which action is appropriate when caring for a client with suspected pulmonary tuberculosis?",
+a:["Use a surgical mask only","Apply contact precautions only","Use airborne precautions with a fit-tested N95 or higher-level respirator","No isolation is necessary"],
+correct:2,
+why:"Suspected infectious pulmonary tuberculosis requires airborne precautions and appropriate respiratory protection."
+},
+{
+topic:"Pharmacology",
+q:"A client receiving insulin becomes shaky, sweaty, and confused. What should the nurse check immediately?",
+a:["Blood glucose","Serum calcium","Blood pressure only","Body temperature"],
+correct:0,
+why:"These findings suggest possible hypoglycemia. Prompt glucose assessment and treatment according to the patient's condition and protocol are essential."
+},
+{
+topic:"Clinical Judgment",
+q:"Which patient should the nurse assess first?",
+a:["Patient requesting a blanket","Patient with new difficulty breathing","Patient asking about discharge paperwork","Patient with chronic mild pain"],
+correct:1,
+why:"New breathing difficulty may represent an immediate threat to oxygenation and takes priority."
+},
+{
+topic:"Medication Safety",
+q:"Before administering a medication, which action helps prevent a medication error?",
+a:["Rely on the patient's room number","Skip identification if the patient is familiar","Use two approved patient identifiers","Ask another patient to confirm identity"],
+correct:2,
+why:"Using two approved identifiers reduces the risk of administering medication to the wrong patient."
+},
+{
+topic:"Delegation",
+q:"Which task is generally appropriate for trained unlicensed assistive personnel caring for a stable patient?",
+a:["Initial nursing assessment","Developing the nursing care plan","Routine vital-sign measurement","Evaluating response to medication"],
+correct:2,
+why:"Routine vital-sign collection for stable patients may be delegated according to training, patient condition, and facility policy. Nursing assessment and evaluation remain the nurse's responsibility."
+}
+];
+let index=0,score=0,selected=null,submitted=false;
+const app=document.getElementById("app");
+function show(){
+if(index>=questions.length){
+app.innerHTML=`<h2>Practice Complete!</h2>
+<p>Your score</p><h1>${score} / ${questions.length}</h1>
+<p>${Math.round(score/questions.length*100)}% correct</p>
+<p class="small">This practice score is not an official NCLEX readiness prediction.</p>
+<button class="primary" onclick="restart()">Practice Again</button>`;
+return;
+}
+let q=questions[index];
+app.innerHTML=`
+<p class="small">Question ${index+1} of ${questions.length} · ${q.topic}</p>
+<div class="progress"><div class="bar" style="width:${index/questions.length*100}%"></div></div>
+<h2>${q.q}</h2>
+${q.a.map((v,i)=>`<button class="option ${selected===i?'selected':''}" onclick="choose(${i})" ${submitted?'disabled':''}>${String.fromCharCode(65+i)}. ${v}</button>`).join("")}
+${submitted?`<div class="feedback"><strong class="${selected===q.correct?'correct':'wrong'}">${selected===q.correct?'Correct!':'Incorrect'}</strong><p><b>Correct answer:</b> ${q.a[q.correct]}</p><p>${q.why}</p></div>`:''}
+<button class="primary" onclick="${submitted?'next()':'submitAnswer()'}" ${selected===null?'disabled':''}>${submitted?'Next Question':'Submit Answer'}</button>`;
+}
+function choose(i){if(!submitted){selected=i;show()}}
+function submitAnswer(){
+if(selected===null)return;
+if(selected===questions[index].correct)score++;
+submitted=true;show();
+}
+function next(){index++;selected=null;submitted=false;show()}
+function restart(){index=0;score=0;selected=null;submitted=false;show()}
+show();
+</script>
+</body>
+</html>
